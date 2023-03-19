@@ -78,7 +78,7 @@ def decrypt(encrypted_message, private_key):
 
 
 
-def generate_key_pair(secret,key_size=2048):
+def generate_key_pair(secret="mymasterpassword",key_size=2048):
     """
     生成RSA密钥对并保存到文件中
 
@@ -261,6 +261,34 @@ def remove_password(public_key,searchKeyword):
 
 
 
+def switch(private_key):
+    print("   \033[32m请输入原主密码： \033[m",end="")
+    old_passwd = input()
+    if secret == old_passwd:
+        print("   \033[32m请输入新密码： \033[m",end="")
+        new_passwd = getpass("")
+        if new_passwd == "":
+            print("   \033[31m密码不能为空！\033[m")
+            return False
+        elif new_passwd == old_passwd:
+            print("   \033[31m新密码与原密码一致！\033[m")
+            return False
+        print("   \033[32m校验新密码： \033[m",end="")
+        check_passwd = getpass("")
+        if new_passwd == check_passwd:
+            private_key = private_key.export_key()
+            content = private_key + new_passwd.encode("utf-8")
+            with open('private.pem', 'wb') as f:
+                f.write(des3_encrypt(new_passwd,content))
+        else:
+            print("   \033[31m两次输入密码不一致！\033[m")
+    else:
+        print("   \033[31m主密码错误！\033[m")
+
+
+
+
+
 
 
 
@@ -277,10 +305,6 @@ def load_passwd_book(private_key):
             return decrypt(f.read(),private_key)
     else:
         return pickle.dumps([])
-
-
-
-
 
 
 
@@ -324,7 +348,8 @@ def show():
         "  all": "打印全部密码",
         "  add": "添加密码 [passwd]",
         "  remove": "删除密码 [searchKeyword]",
-        "  exit": "退出"
+        "  exit": "退出",
+        "  switch": "更改主密码"
     }
 
     print(logo)
@@ -340,18 +365,26 @@ def show():
 
 
 
+
+
 #初始化 colorama 模块
 init()
 
 show()
 
-secret = ""
-# masterpassword = "mymasterpassword"
-# generate_key_pair(masterpassword,key_size=2048)
 if not os.path.exists("private.pem"):
-    print("    \033[31m私钥不存在，退出程序...\033[0m")
-    sys.exit()
-elif not os.path.exists("public.pem"):
+    print("   \033[31m私钥不存在，是否创建密钥对(y/n)\033[0m",end="")
+    flag = input()
+    if flag == "y":
+        generate_key_pair(key_size=2048)
+        print("   \033[32m已创建密钥对，\033[0m",end="")
+        print("\033[31m默认主密码：mymasterpassword\033[0m")
+    else:
+        sys.exit()
+
+
+secret = ""
+if not os.path.exists("public.pem"):
     print("    \033[31m公钥不存在，进程无法进行增删改操作...\033[0m")
     sys.exit()
 
@@ -364,12 +397,12 @@ public_key = load_public_key("public.pem")
 
 all_list = pickle.loads(load_passwd_book(private_key))
 if not all_list:
-    print("    暂无加密文件，加密内容为空")
+    print("    \033[32m暂无加密文件，加密内容为空\033[m")
 
 
 
 
-commands = ["select","all","add","remove","exit"]
+commands = ["select","all","add","remove","exit","switch"]
 
 while True:
     print("\033[32m>>> \033[m",end="")
@@ -401,7 +434,7 @@ while True:
                     add_password(public_key,argument)
         else:
             count += 1
-        if count == 5:
+        if count == 6:
             print("    \033[32m无效命令！\033[0m")
     
 
