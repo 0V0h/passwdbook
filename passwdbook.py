@@ -416,6 +416,8 @@ while True:
                 sys.exit()
             elif command == "all":
                 all_password()
+            elif command == "switch":
+                switch(private_key)
             else:
                 match = re.match(fr"{command}\s+(.*)", cmd)
                 if match:
