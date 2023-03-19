@@ -1,6 +1,6 @@
 # PasswordBook
 
-PasswordBook 是一个用于加密记录密码信息的 Python 小工具，验证主密码通过后即可对密码本的信息进行增删查。
+PasswordBook 是用于加密记录密码信息的 Python 小工具，验证主密码通过后即可对密码本的信息进行增删查。
 
 ## 安装
 
