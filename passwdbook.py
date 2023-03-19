@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP
-import base64
-from Crypto.Cipher import DES3
-from Crypto.Util.Padding import pad, unpad
-from hashlib import md5
-from getpass import getpass
-import pickle
 import os
-from Crypto.Hash import SHA256
 import sys
 import re
+import base64
+import pickle
+from hashlib import md5
+from getpass import getpass
+
 from colorama import init
+from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
+from Crypto.Cipher import DES3, PKCS1_OAEP
+from Crypto.Util.Padding import pad, unpad
+
 
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -189,8 +190,6 @@ def load_private_key(secret,filename):
     返回值：
     private_key - 私钥对象
     """
-    
-
     with open(filename, 'rb') as f:
         content = f.read()
         content = des3_decrypt(secret, content)
@@ -201,8 +200,10 @@ def load_private_key(secret,filename):
 
 
 
-
 def all_password():
+    """
+    打印所有已加密的密码
+    """
     global all_list
     for passwd in all_list:
         print(f"\033[31m   [*] {passwd}\033[0m")
@@ -210,6 +211,9 @@ def all_password():
 
 
 def select_password(searchKeyword):
+    """
+    根据关键字检索加密文件中的密码
+    """
     global all_list
     cycleCount = 0
     for passwd in all_list:
@@ -224,6 +228,9 @@ def select_password(searchKeyword):
 
 
 def add_password(public_key,passwd):
+    """
+    添加新密码到加密文件中
+    """
     global all_list
     all_list.append(passwd)
     save_passwd_book(public_key)
@@ -231,10 +238,12 @@ def add_password(public_key,passwd):
 
 
 def remove_password(public_key,searchKeyword):
+    """
+    删除加密文件中的密码
+    """
     global all_list
     remove_list = []
     cycleCount = 0
-
 
     for passwd in all_list:
         if searchKeyword in passwd:
@@ -252,7 +261,6 @@ def remove_password(public_key,searchKeyword):
                 save_passwd_book(public_key)
                 break
             elif flag == "n":
-                pass
                 break
             else:
                 print("    \033[32m请输入正确的参数\033[0m")
@@ -262,6 +270,9 @@ def remove_password(public_key,searchKeyword):
 
 
 def switch(private_key):
+    """
+    更改主密码
+    """
     print("   \033[32m请输入原主密码： \033[m",end="")
     old_passwd = input()
     if secret == old_passwd:
@@ -398,6 +409,7 @@ public_key = load_public_key("public.pem")
 all_list = pickle.loads(load_passwd_book(private_key))
 if not all_list:
     print("    \033[32m暂无加密文件，加密内容为空\033[m")
+
 
 
 
