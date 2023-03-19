@@ -11,6 +11,8 @@ PasswordBook 是一个用于加密记录密码信息的 Python 小工具，验�
 
 执行命令启动 ```python passwordbook.py```
 
+- 如果存在须删除其他密钥文件，仅保留py脚本。
+
 - 在首次运行 PasswordBook 时，需要生成密钥对，更新默认主密码。
 
 - 建议将文件目录添加到环境变量中，以便使用。
